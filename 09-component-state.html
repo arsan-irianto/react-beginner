@@ -14,7 +14,9 @@
           } else {
             const startTime = Date.now() - this.state.lapse;
             this.timer = setInterval(() => {
-              this.setState({ lapse: Date.now() - startTime });
+              this.setState({ lapse: Date.now() - startTime }, () => {
+                console.log(this.state.lapse);
+              });
             });
           }
           return { running: !state.running };
@@ -25,6 +27,10 @@
         clearInterval(this.timer);
         this.setState({ lapse: 0, running: false });
       };
+
+      componentWillUnmount() {
+        clearInterval(this.timer);
+      }
 
       render() {
         const { lapse, running } = this.state;
@@ -52,7 +58,29 @@
       }
     }
 
-    const element = <StopWatch />;
+    class CheckStopWatch extends React.Component {
+      state = { isChecked: true };
+
+      handleChange = () => {
+        this.setState({ isChecked: !this.state.isChecked });
+      };
+
+      render() {
+        return (
+          <div>
+            <label>Show Stop Watch</label>
+            <input
+              type="checkbox"
+              checked={this.state.isChecked}
+              onChange={this.handleChange}
+            />
+            {this.state.isChecked ? <StopWatch /> : ""}
+          </div>
+        );
+      }
+    }
+
+    const element = <CheckStopWatch />;
     ReactDOM.render(element, document.getElementById("root"));
   </script>
 </body>
